@@ -6,16 +6,16 @@
 )]
 
 use enigo::{Enigo, MouseButton, MouseControllable};
-use tauri_plugin_dialog::DialogExt;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
-use tauri::{Emitter, Manager, Window};
+use tauri::{Emitter, Manager, Webview, WebviewWindow, Window};
+use tauri_plugin_dialog::DialogExt;
 static CLICKING: AtomicBool = AtomicBool::new(false);
 
 #[tauri::command]
-fn start_clicking(x: i32, y: i32, interval_ms: u64, window: Window) {
+fn start_clicking(x: i32, y: i32, interval_ms: u64, window: WebviewWindow) {
     if CLICKING.swap(true, Ordering::SeqCst) {
         return; // Already clicking
     }
@@ -23,8 +23,20 @@ fn start_clicking(x: i32, y: i32, interval_ms: u64, window: Window) {
     let window_clone = window.clone();
 
     // แสดง dialog เมื่อเริ่มการคลิก
-
-
+    window
+        .dialog()
+        .message("เริ่มการคลิกอัตโนมัติแล้ว!")
+        .title("Auto Clicker")
+        // .show(|result| match result {
+        //     true => {
+        //         println!("Dialog closed");
+        //     }
+        //     false => {
+        //         println!("Dialog not closed");
+        //         // Emit event to update status
+        //     }
+        // });
+        .show(|_| {});
     // Spawn a new thread to handle clicking
     std::thread::spawn(move || {
         let mut enigo = Enigo::new();
@@ -47,16 +59,31 @@ fn start_clicking(x: i32, y: i32, interval_ms: u64, window: Window) {
         // Emit event when clicking stops
         if let Err(e) = window_clone.emit_to("main", "clicking-status", false) {
             println!("Failed to emit event: {:?}", e);
+        } else {
+            window
+                .dialog()
+                .message("หยุดการคลิกอัตโนมัติแล้ว!")
+                .title("Auto Clicker")
+                // .show(|result| match result {
+                //     true => {
+                //         println!("Dialog closed");
+                //     }
+                //     false => {
+                //         println!("Dialog not closed");
+                //         // Emit event to update status
+                //     }
+                // });
+                .blocking_show();
         }
     });
 }
 
 #[tauri::command]
-fn stop_clicking(window: Window) {
+fn stop_clicking(window: WebviewWindow) {
     CLICKING.store(false, Ordering::SeqCst);
+    println!("Stopping clicking...");
 
     // แสดง dialog เมื่อหยุดการคลิก
- 
 }
 
 #[tauri::command]
@@ -93,33 +120,10 @@ fn main() {
                                     }
                                     ShortcutState::Released => {
                                         println!("ESC Released!");
-
-                                        // หยุดการคลิกก่อน
-                                        CLICKING.store(false, Ordering::SeqCst);
-
-                                        // แสดง dialog ถ้ามี window
                                         if let Some(window) = main_window.clone() {
-                                            window
-                                                .dialog()
-                                                .message("หยุดการคลิกอัตโนมัติแล้ว!")
-                                                .title("Auto Clicker")
-                                                .show(|result| match result {
-                                                    true => {
-                                                        println!("Dialog closed");
-                                                    }
-                                                    false => {
-                                                        println!("Dialog not closed");
-                                                        // Emit event to update status      
-                                                    },
-                                                });
-
-                                            // emit event
-                                            if let Err(e) =
-                                                window.emit_to("main", "clicking-status", false)
-                                            {
-                                                println!("Failed to emit event: {:?}", e);
-                                            }
+                                            stop_clicking(window.clone());
                                         }
+
                                     }
                                 }
                             }

@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const y = parseInt(yPosInput.value, 10);
     const interval = parseInt(intervalInput.value, 10);
 
-    if (isNaN(x) || isNaN(y) || isNaN(interval) || interval < 100) {
+    if (isNaN(x) || isNaN(y) || isNaN(interval) || interval < 10) {
       alert("กรุณาใส่ค่าที่ถูกต้อง (ระยะเวลาต้องมากกว่า 100ms)");
       return;
     }
