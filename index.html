@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auto Clicker</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>Auto Clicker</h1>
+        
+        <div class="status-bar">
+            <div class="status-indicator" id="status-indicator"></div>
+            <span id="status-text">ไม่ได้ทำงาน</span>
+        </div>
+        
+        <div class="control-group">
+            <h2>ตำแหน่งเมาส์</h2>
+            <div class="position-controls">
+                <div class="input-group">
+                    <label for="x-pos">X:</label>
+                    <input type="number" id="x-pos" value="500" />
+                </div>
+                <div class="input-group">
+                    <label for="y-pos">Y:</label>
+                    <input type="number" id="y-pos" value="500" />
+                </div>
+                <button id="get-position">ตำแหน่งปัจจุบัน</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h2>ระยะเวลาระหว่างคลิก</h2>
+            <div class="input-group">
+                <label for="interval">ระยะเวลา (มิลลิวินาที):</label>
+                <input type="number" id="interval" min="100" value="1000" />
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button id="start-btn" class="primary-btn">เริ่มคลิก</button>
+            <button id="stop-btn" class="secondary-btn" disabled>หยุดคลิก</button>
+        </div>
+        
+        <div class="shortcut-info">
+            <p>กด <kbd>ESC</kbd> เพื่อหยุดการทำงานได้ตลอดเวลา</p>
+        </div>
+        <div class="shortcut-info">
+            <p>กด <kbd>X</kbd> เพื่อตั้งค่าตำแหน่งเมาส์เป็นตำแหน่งปัจจุบัน</p>
+        </div>
+    </div>
+    
+    <script src="/src/main.ts" type="module"></script>
+</body>
+</html>
